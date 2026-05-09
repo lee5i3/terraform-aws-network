@@ -20,6 +20,14 @@ private_subnets = [
   { cidr = "10.0.103.0/24", availability_zone = "us-east-1c" },
 ]
 
+# Transit subnets — optional, used for TGW attachments or network appliances
+# Omit or set to [] to skip
+transit_subnets = [
+  { cidr = "10.0.201.0/24", availability_zone = "us-east-1a" },
+  { cidr = "10.0.202.0/24", availability_zone = "us-east-1b" },
+  { cidr = "10.0.203.0/24", availability_zone = "us-east-1c" },
+]
+
 # Additional tags applied to every resource
 tags = {
   Environment = "dev"

@@ -18,6 +18,16 @@ output "private_subnet_ids" {
   value       = aws_subnet.private[*].id
 }
 
+output "transit_subnet_ids" {
+  description = "List of transit subnet IDs (empty if none configured)"
+  value       = aws_subnet.transit[*].id
+}
+
+output "transit_route_table_id" {
+  description = "The ID of the transit route table (null if no transit subnets configured)"
+  value       = length(aws_route_table.transit) > 0 ? aws_route_table.transit[0].id : null
+}
+
 output "internet_gateway_id" {
   description = "The ID of the Internet Gateway"
   value       = aws_internet_gateway.this.id

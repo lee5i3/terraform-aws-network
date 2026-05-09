@@ -33,6 +33,15 @@ variable "private_subnets" {
   ]
 }
 
+variable "transit_subnets" {
+  description = "Optional list of transit subnet configurations (e.g. for TGW attachments or network appliances), each with a cidr and availability_zone"
+  type = list(object({
+    cidr              = string
+    availability_zone = string
+  }))
+  default = []
+}
+
 variable "tags" {
   description = "Additional tags to apply to all resources"
   type        = map(string)

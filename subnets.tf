@@ -9,6 +9,16 @@ resource "aws_subnet" "public" {
   tags = merge(local.common_tags, { Name = "${var.name}-public-${count.index + 1}" })
 }
 
+resource "aws_subnet" "transit" {
+  count = length(var.transit_subnets)
+
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = var.transit_subnets[count.index].cidr
+  availability_zone = var.transit_subnets[count.index].availability_zone
+
+  tags = merge(local.common_tags, { Name = "${var.name}-transit-${count.index + 1}" })
+}
+
 resource "aws_subnet" "private" {
   count = length(var.private_subnets)
 

@@ -16,6 +16,21 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
+resource "aws_route_table" "transit" {
+  count = length(var.transit_subnets) > 0 ? 1 : 0
+
+  vpc_id = aws_vpc.this.id
+
+  tags = merge(local.common_tags, { Name = "${var.name}-transit-rt" })
+}
+
+resource "aws_route_table_association" "transit" {
+  count = length(var.transit_subnets)
+
+  subnet_id      = aws_subnet.transit[count.index].id
+  route_table_id = aws_route_table.transit[0].id
+}
+
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.this.id
 
