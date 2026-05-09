@@ -24,8 +24,15 @@ output "transit_subnet_ids" {
 }
 
 output "transit_route_table_id" {
-  description = "The ID of the transit route table (null if no transit subnets configured)"
+  description = "Shared transit route table ID (null when GWLB is enabled — use transit_route_table_ids instead)"
   value       = length(aws_route_table.transit) > 0 ? aws_route_table.transit[0].id : null
+}
+
+output "transit_route_table_ids" {
+  description = "All transit route table IDs — one shared table when GWLB disabled, one per AZ when GWLB enabled"
+  value = var.enable_gateway_lb ? aws_route_table.transit_gwlb[*].id : (
+    length(aws_route_table.transit) > 0 ? [aws_route_table.transit[0].id] : []
+  )
 }
 
 output "internet_gateway_id" {
@@ -41,4 +48,24 @@ output "public_route_table_id" {
 output "private_route_table_id" {
   description = "The ID of the private route table"
   value       = aws_route_table.private.id
+}
+
+output "gateway_lb_arn" {
+  description = "ARN of the Gateway Load Balancer (null if not enabled)"
+  value       = length(aws_lb.gwlb) > 0 ? aws_lb.gwlb[0].arn : null
+}
+
+output "gateway_lb_target_group_arn" {
+  description = "ARN of the GWLB target group (null if not enabled)"
+  value       = length(aws_lb_target_group.gwlb) > 0 ? aws_lb_target_group.gwlb[0].arn : null
+}
+
+output "gateway_lb_endpoint_service_name" {
+  description = "Name of the GWLB VPC Endpoint Service (null if not enabled)"
+  value       = length(aws_vpc_endpoint_service.gwlb) > 0 ? aws_vpc_endpoint_service.gwlb[0].service_name : null
+}
+
+output "gateway_lb_endpoint_ids" {
+  description = "List of GWLB VPC Endpoint IDs, one per transit subnet AZ (empty if not enabled)"
+  value       = aws_vpc_endpoint.gwlb[*].id
 }

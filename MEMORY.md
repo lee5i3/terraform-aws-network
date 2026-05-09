@@ -32,3 +32,13 @@ Reference this when onboarding, auditing, or understanding why something was bui
 - Added `CLAUDE.md` for project context and conventions
 - Added `MEMORY.md` (this file) for request tracking
 - Updated `README.md` with full module documentation
+
+### Feature: optional east-west GWLB
+- Added `enable_gateway_lb` (bool, default false), `gateway_lb_cross_zone_enabled`, `east_west_inspection_cidrs` variables
+- Created `gateway_lb.tf`: GWLB (type=gateway), GENEVE/6081 target group, listener
+- Created `gateway_lb_endpoints.tf`: VPC Endpoint Service (auto-accept), one GWLB endpoint per transit subnet AZ
+- Updated `route_tables.tf`: shared transit RT when GWLB disabled; per-AZ transit RTs with GWLB endpoint routes when enabled
+- Updated `locals.tf`: added `transit_gwlb_routes` flat list for AZ × CIDR route combinations
+- Updated `outputs.tf`: added GWLB ARN, TG ARN, endpoint service name, endpoint IDs, `transit_route_table_ids`
+- Updated `terraform.example.tfvars` with GWLB options
+- Updated `CLAUDE.md` with east-west flow diagram and revised design decisions

@@ -42,6 +42,24 @@ variable "transit_subnets" {
   default = []
 }
 
+variable "enable_gateway_lb" {
+  description = "Enable a Gateway Load Balancer in transit subnets for east-west traffic inspection. Requires transit_subnets to be set."
+  type        = bool
+  default     = false
+}
+
+variable "gateway_lb_cross_zone_enabled" {
+  description = "Enable cross-zone load balancing on the Gateway Load Balancer"
+  type        = bool
+  default     = false
+}
+
+variable "east_west_inspection_cidrs" {
+  description = "CIDRs to route through GWLB endpoints in per-AZ transit route tables (only used when enable_gateway_lb = true)"
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   description = "Additional tags to apply to all resources"
   type        = map(string)

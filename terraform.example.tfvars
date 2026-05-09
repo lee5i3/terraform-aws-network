@@ -28,6 +28,18 @@ transit_subnets = [
   { cidr = "10.0.203.0/24", availability_zone = "us-east-1c" },
 ]
 
+# Gateway Load Balancer for east-west traffic inspection
+# Requires transit_subnets to be set. Set to false to skip all GWLB resources.
+enable_gateway_lb             = true
+gateway_lb_cross_zone_enabled = false
+
+# CIDRs to route through GWLB endpoints in per-AZ transit route tables
+# Typically the aggregate CIDR ranges of your spoke VPCs
+east_west_inspection_cidrs = [
+  "10.1.0.0/16", # spoke vpc a
+  "10.2.0.0/16", # spoke vpc b
+]
+
 # Additional tags applied to every resource
 tags = {
   Environment = "dev"
