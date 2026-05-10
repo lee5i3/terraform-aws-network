@@ -87,6 +87,11 @@ output "gateway_lb_endpoint_ids" {
   value       = aws_vpc_endpoint.gwlb[*].id
 }
 
+output "s3_endpoint_id" {
+  description = "S3 Gateway VPC Endpoint ID (null if not enabled)"
+  value       = length(aws_vpc_endpoint.s3) > 0 ? aws_vpc_endpoint.s3[0].id : null
+}
+
 output "flow_log_id" {
   description = "VPC Flow Log ID (null if not enabled)"
   value       = length(aws_flow_log.this) > 0 ? aws_flow_log.this[0].id : null

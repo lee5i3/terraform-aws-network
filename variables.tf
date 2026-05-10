@@ -90,6 +90,12 @@ variable "east_west_inspection_cidrs" {
   }
 }
 
+variable "enable_s3_endpoint" {
+  description = "Enable a free S3 Gateway VPC endpoint — routes S3 traffic inside the VPC, reducing NAT GW costs"
+  type        = bool
+  default     = false
+}
+
 variable "enable_nat_gateway" {
   description = "Enable NAT Gateway(s) for private subnet outbound internet access. Requires at least one public subnet."
   type        = bool
