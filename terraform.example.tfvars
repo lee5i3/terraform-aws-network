@@ -40,6 +40,10 @@ east_west_inspection_cidrs = [
   "10.2.0.0/16", # spoke vpc b
 ]
 
+# VPC Flow Logs — enable to send ALL traffic metadata to CloudWatch
+enable_vpc_flow_logs     = true
+flow_logs_retention_days = 90
+
 # Additional tags applied to every resource
 tags = {
   Environment = "dev"

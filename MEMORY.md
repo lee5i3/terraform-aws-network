@@ -42,3 +42,18 @@ Reference this when onboarding, auditing, or understanding why something was bui
 - Updated `outputs.tf`: added GWLB ARN, TG ARN, endpoint service name, endpoint IDs, `transit_route_table_ids`
 - Updated `terraform.example.tfvars` with GWLB options
 - Updated `CLAUDE.md` with east-west flow diagram and revised design decisions
+
+### tfvars examples
+- Added `terraform.gateway.tfvars` for east-west GWLB setup
+- Clarified comment in `terraform.minimal.tfvars`
+
+## 2026-05-10
+
+### Security + improvements
+- **Variable validation**: added `can(cidrhost(...))` validation to all CIDR inputs; `length > 0` on `name`; valid CloudWatch retention value on `flow_logs_retention_days`
+- **Cross-variable guards**: added `validations.tf` with `terraform_data` preconditions — GWLB requires transit subnets; inspection CIDRs require GWLB enabled
+- **Default SG lockdown**: added `default_sg.tf` — `aws_default_security_group` with no rules (CIS AWS Benchmark 5.4)
+- **VPC Flow Logs**: added `flow_logs.tf` — optional CloudWatch log group + scoped IAM role + `aws_flow_log` (traffic=ALL), gated on `enable_vpc_flow_logs`; added `flow_logs_retention_days` variable (default 90d)
+- **CI**: added `.github/workflows/validate.yml` — runs `terraform fmt -check` + `terraform validate` on every PR and push to main
+- **versions.tf**: bumped minimum Terraform to 1.4.0 (required for `terraform_data`)
+- Updated `outputs.tf`, `terraform.example.tfvars`, `terraform.gateway.tfvars`, `CLAUDE.md`, `README.md`

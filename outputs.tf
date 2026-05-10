@@ -69,3 +69,18 @@ output "gateway_lb_endpoint_ids" {
   description = "List of GWLB VPC Endpoint IDs, one per transit subnet AZ (empty if not enabled)"
   value       = aws_vpc_endpoint.gwlb[*].id
 }
+
+output "flow_log_id" {
+  description = "VPC Flow Log ID (null if not enabled)"
+  value       = length(aws_flow_log.this) > 0 ? aws_flow_log.this[0].id : null
+}
+
+output "flow_log_cloudwatch_log_group" {
+  description = "CloudWatch Log Group name for VPC Flow Logs (null if not enabled)"
+  value       = length(aws_cloudwatch_log_group.flow_logs) > 0 ? aws_cloudwatch_log_group.flow_logs[0].name : null
+}
+
+output "default_security_group_id" {
+  description = "ID of the VPC default security group (locked down — no rules)"
+  value       = aws_default_security_group.this.id
+}

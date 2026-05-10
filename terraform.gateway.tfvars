@@ -29,6 +29,10 @@ east_west_inspection_cidrs = [
   "10.2.0.0/16", # spoke vpc b
 ]
 
+# VPC Flow Logs
+enable_vpc_flow_logs     = true
+flow_logs_retention_days = 90
+
 tags = {
   Environment = "prod"
   ManagedBy   = "terraform"
