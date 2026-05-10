@@ -1,0 +1,58 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Terraform Format & Validate
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dir:
+          - "."
+          - "examples/basic"
+          - "examples/gateway"
+          - "examples/nat-gateway"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.4"
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive
+        working-directory: ${{ matrix.dir }}
+
+      - name: terraform init
+        run: terraform init -backend=false
+        working-directory: ${{ matrix.dir }}
+
+      - name: terraform validate
+        run: terraform validate
+        working-directory: ${{ matrix.dir }}
+
+  lint:
+    name: tflint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.55.0
+
+      - name: Init tflint
+        run: tflint --init
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Run tflint
+        run: tflint --recursive
