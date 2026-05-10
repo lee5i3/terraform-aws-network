@@ -56,15 +56,50 @@ resource "aws_route_table_association" "transit_gwlb" {
   route_table_id = aws_route_table.transit_gwlb[count.index].id
 }
 
+# Shared private route table — used when NAT HA is not enabled
 resource "aws_route_table" "private" {
+  count = (var.enable_nat_gateway && !var.single_nat_gateway) ? 0 : 1
+
   vpc_id = aws_vpc.this.id
 
   tags = merge(local.common_tags, { Name = "${var.name}-private-rt" })
 }
 
+resource "aws_route" "private_nat_single" {
+  count = (var.enable_nat_gateway && var.single_nat_gateway) ? 1 : 0
+
+  route_table_id         = aws_route_table.private[0].id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.this[0].id
+}
+
 resource "aws_route_table_association" "private" {
-  count = length(aws_subnet.private)
+  count = (var.enable_nat_gateway && !var.single_nat_gateway) ? 0 : length(var.private_subnets)
 
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private.id
+  route_table_id = aws_route_table.private[0].id
+}
+
+# Per-AZ private route tables — used when HA NAT is enabled (single_nat_gateway = false)
+resource "aws_route_table" "private_nat" {
+  count = (var.enable_nat_gateway && !var.single_nat_gateway) ? length(var.private_subnets) : 0
+
+  vpc_id = aws_vpc.this.id
+
+  tags = merge(local.common_tags, { Name = "${var.name}-private-rt-${count.index + 1}" })
+}
+
+resource "aws_route" "private_nat_ha" {
+  count = (var.enable_nat_gateway && !var.single_nat_gateway) ? length(var.private_subnets) : 0
+
+  route_table_id         = aws_route_table.private_nat[count.index].id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.this[count.index % local.nat_gateway_count].id
+}
+
+resource "aws_route_table_association" "private_nat" {
+  count = (var.enable_nat_gateway && !var.single_nat_gateway) ? length(var.private_subnets) : 0
+
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private_nat[count.index].id
 }

@@ -46,8 +46,25 @@ output "public_route_table_id" {
 }
 
 output "private_route_table_id" {
-  description = "The ID of the private route table"
-  value       = aws_route_table.private.id
+  description = "Shared private route table ID (null when HA NAT is enabled — use private_route_table_ids instead)"
+  value       = length(aws_route_table.private) > 0 ? aws_route_table.private[0].id : null
+}
+
+output "private_route_table_ids" {
+  description = "All private route table IDs — one shared table normally, one per AZ when HA NAT enabled"
+  value = (var.enable_nat_gateway && !var.single_nat_gateway) ? aws_route_table.private_nat[*].id : (
+    length(aws_route_table.private) > 0 ? [aws_route_table.private[0].id] : []
+  )
+}
+
+output "nat_gateway_ids" {
+  description = "List of NAT Gateway IDs (empty if not enabled)"
+  value       = aws_nat_gateway.this[*].id
+}
+
+output "nat_gateway_public_ips" {
+  description = "List of Elastic IPs associated with NAT Gateways (empty if not enabled)"
+  value       = aws_eip.nat[*].public_ip
 }
 
 output "gateway_lb_arn" {

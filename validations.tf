@@ -9,6 +9,15 @@ resource "terraform_data" "gwlb_requires_transit_subnets" {
   }
 }
 
+resource "terraform_data" "nat_gateway_requires_public_subnets" {
+  lifecycle {
+    precondition {
+      condition     = !var.enable_nat_gateway || length(var.public_subnets) > 0
+      error_message = "enable_nat_gateway = true requires at least one public_subnet."
+    }
+  }
+}
+
 resource "terraform_data" "gwlb_inspection_cidrs_require_gwlb" {
   lifecycle {
     precondition {

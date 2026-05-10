@@ -90,6 +90,18 @@ variable "east_west_inspection_cidrs" {
   }
 }
 
+variable "enable_nat_gateway" {
+  description = "Enable NAT Gateway(s) for private subnet outbound internet access. Requires at least one public subnet."
+  type        = bool
+  default     = false
+}
+
+variable "single_nat_gateway" {
+  description = "Use a single NAT Gateway (cost saving) instead of one per public subnet AZ (high availability)"
+  type        = bool
+  default     = false
+}
+
 variable "enable_vpc_flow_logs" {
   description = "Enable VPC Flow Logs to CloudWatch Logs"
   type        = bool
