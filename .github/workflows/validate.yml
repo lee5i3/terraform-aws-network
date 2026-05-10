@@ -11,6 +11,14 @@ jobs:
     name: Terraform Format & Validate
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        dir:
+          - "."
+          - "examples/basic"
+          - "examples/gateway"
+          - "examples/nat-gateway"
+
     steps:
       - uses: actions/checkout@v4
 
@@ -20,9 +28,12 @@ jobs:
 
       - name: terraform fmt
         run: terraform fmt -check -recursive
+        working-directory: ${{ matrix.dir }}
 
       - name: terraform init
         run: terraform init -backend=false
+        working-directory: ${{ matrix.dir }}
 
       - name: terraform validate
         run: terraform validate
+        working-directory: ${{ matrix.dir }}
